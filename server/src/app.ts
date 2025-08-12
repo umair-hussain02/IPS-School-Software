@@ -4,6 +4,8 @@ import cors from "cors";
 import morgan from "morgan";
 import compression from "compression";
 import rateLimit from "express-rate-limit";
+import { errorHandler, notFoundHandler } from "./middlerwares/error.middleware";
+import healthRouter from "./modules/health/heath.route";
 
 const app = express();
 // security Header
@@ -31,10 +33,10 @@ app.use(
   })
 );
 
-// app.use('/health', healthRouter)
+app.use("/health", healthRouter);
 
-// app.use(notFoundHandlere)
+app.use(notFoundHandler);
 
-// app.use(errorHandler)
+app.use(errorHandler);
 
 export default app;
