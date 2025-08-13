@@ -1,24 +1,43 @@
-import { Document, model, Schema, Types } from "mongoose";
+import { Schema, model, Types, Document } from "mongoose";
 
 export interface IAttendance extends Document {
-  userId: Types.ObjectId;
+  user: Types.ObjectId; // student or teacher ID (from User model)
   date: Date;
-  status: "present" | "absent" | "late" | "excused";
+  status: "present" | "absent" | "leave" | "late";
+  remarks?: string;
+  markedBy: Types.ObjectId; // who marked the attendance (teacher/admin)
 }
 
 const AttendanceSchema = new Schema<IAttendance>(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    date: { type: Date, required: true },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    date: {
+      type: Date,
+      required: true,
+    },
     status: {
       type: String,
-      enum: ["present", "absent", "late", "excused"],
+      enum: ["present", "absent", "leave", "late"],
       required: true,
+    },
+    remarks: {
+      type: String,
+    },
+    markedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User", // teacher/admin ID
     },
   },
   {
     timestamps: true,
   }
 );
+
+AttendanceSchema.index({ user: 1, date: 1 }, { unique: true });
+// Prevent duplicate attendance for the same user on the same date
 
 export const Attendance = model<IAttendance>("Attendance", AttendanceSchema);

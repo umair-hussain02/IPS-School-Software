@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "@types/compression": "^1.8.1"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2"
   }
 }

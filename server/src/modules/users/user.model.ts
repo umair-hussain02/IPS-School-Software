@@ -11,8 +11,7 @@ export interface IUser extends Document {
   gender: string;
   profilePicture: string;
   address: string;
-  createdAt: Date;
-  updatedAt: Date;
+  refreshToken: string;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -51,6 +50,10 @@ const UserSchema = new Schema<IUser>(
     address: {
       type: String,
       required: true,
+    },
+    refreshToken: {
+      type: String,
+      default: "",
     },
   },
   {
