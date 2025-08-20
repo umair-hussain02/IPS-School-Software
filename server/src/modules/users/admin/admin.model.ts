@@ -1,0 +1,62 @@
+import { compare } from "bcryptjs";
+import { hash } from "bcryptjs";
+import mongoose from "mongoose";
+import { Model, Schema } from "mongoose";
+
+export interface IAdmin extends Document {
+  fullName: string;
+  phoneNumber: string;
+  password: string;
+  role: string;
+  status: string;
+  profilePicture: string;
+  refreshToken: string;
+}
+
+const AdminSchema = new Schema<IAdmin>({
+  fullName: {
+    type: String,
+    required: [true, "Username is required"],
+  },
+  phoneNumber: {
+    type: String,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  role: {
+    type: String,
+    enum: ["admin", "student", "teacher", "other"],
+  },
+  status: {
+    type: String,
+    enum: ["active", "inactive"],
+    default: "active",
+  },
+  profilePicture: {
+    type: String,
+    default: "",
+  },
+  refreshToken: {
+    type: String,
+    default: "",
+  },
+});
+
+AdminSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await hash(this.password, 10);
+  next();
+});
+
+// compare password
+AdminSchema.methods.comparePassword = async function (
+  candidatePassword: string
+): Promise<boolean> {
+  return await compare(candidatePassword, this.password);
+};
+
+export const Admin: Model<IAdmin> =
+  mongoose.models.Admin || mongoose.model<IAdmin>("Admin", AdminSchema);

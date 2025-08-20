@@ -1,7 +1,8 @@
+import { Model, Schema } from "mongoose";
 import { compare, hash } from "bcryptjs";
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose from "mongoose";
 
-export interface IUser extends Document {
+export interface IOther {
   fullName: string;
   phoneNumber: string;
   password: string;
@@ -12,9 +13,12 @@ export interface IUser extends Document {
   profilePicture: string;
   address: string;
   refreshToken: string;
+
+  documents: string[];
+  salary: number;
 }
 
-const UserSchema = new Schema<IUser>(
+const OtherSchema = new Schema<IOther>(
   {
     fullName: {
       type: String,
@@ -55,25 +59,30 @@ const UserSchema = new Schema<IUser>(
       type: String,
       default: "",
     },
+    documents: {
+      type: [String],
+      default: [],
+    },
+    salary: {
+      type: Number,
+      required: true,
+    },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-// Password hash middleware
-UserSchema.pre("save", async function (next) {
+OtherSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await hash(this.password, 10);
   next();
 });
 
 // compare password
-UserSchema.methods.comparePassword = async function (
+OtherSchema.methods.comparePassword = async function (
   candidatePassword: string
 ): Promise<boolean> {
   return await compare(candidatePassword, this.password);
 };
 
-export const User: Model<IUser> =
-  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
+export const OtherUser: Model<IOther> =
+  mongoose.models.User || mongoose.model<IOther>("User", OtherSchema);
