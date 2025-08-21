@@ -11,7 +11,7 @@ import { Request, Response } from "express";
 export const markStudentAttendance = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const { studentId, date, records, remarks } = req.body;
+      const { date, records } = req.body;
 
       const teacherId = req.user?._id;
       const role = req.user?.role;
