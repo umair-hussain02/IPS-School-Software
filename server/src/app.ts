@@ -6,7 +6,8 @@ import compression from "compression";
 import rateLimit from "express-rate-limit";
 import { errorHandler, notFoundHandler } from "./middlerwares/error.middleware";
 import healthRouter from "./modules/health/heath.route";
-import teacherRouter from "./modules/users/teacher/teacher.route";
+import adminRouter from "./modules/users/admin/admin.route";
+import studentRouter from "./modules/users/student/student.route";
 
 const app = express();
 // security Header
@@ -35,7 +36,8 @@ app.use(
 );
 
 app.use("/api/v1/health", healthRouter);
-app.use("/api/v1/admin", teacherRouter);
+app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/student", studentRouter);
 
 app.use(notFoundHandler);
 

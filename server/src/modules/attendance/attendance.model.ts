@@ -1,18 +1,34 @@
 import { Schema, model, Types, Document } from "mongoose";
 
+export enum AttendanceStatus {
+  PRESENT = "present",
+  LATE = "late",
+  ABSENT = "absent",
+  EXCUSED = "excused",
+}
+
+// ------------------------------Student Model---------------------------
+
 export interface IAttendance extends Document {
-  user: Types.ObjectId; // student or teacher ID (from User model)
+  student: Types.ObjectId; // student or teacher ID (from User model)
+  class: Types.ObjectId; // class ID (from Class model)
+
   date: Date;
-  status: "present" | "absent" | "leave" | "late";
+  status: AttendanceStatus;
   remarks?: string;
   markedBy: Types.ObjectId; // who marked the attendance (teacher/admin)
 }
 
 const AttendanceSchema = new Schema<IAttendance>(
   {
-    user: {
+    student: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Student",
+      required: true,
+    },
+    class: {
+      type: Schema.Types.ObjectId,
+      ref: "Class",
       required: true,
     },
     date: {
@@ -21,7 +37,7 @@ const AttendanceSchema = new Schema<IAttendance>(
     },
     status: {
       type: String,
-      enum: ["present", "absent", "leave", "late"],
+      enum: Object.values(AttendanceStatus),
       required: true,
     },
     remarks: {
@@ -29,7 +45,7 @@ const AttendanceSchema = new Schema<IAttendance>(
     },
     markedBy: {
       type: Schema.Types.ObjectId,
-      ref: "User", // teacher/admin ID
+      ref: "Teacher", // teacher/admin ID
     },
   },
   {
@@ -40,4 +56,42 @@ const AttendanceSchema = new Schema<IAttendance>(
 AttendanceSchema.index({ user: 1, date: 1 }, { unique: true });
 // Prevent duplicate attendance for the same user on the same date
 
-export const Attendance = model<IAttendance>("Attendance", AttendanceSchema);
+export const StudentAttendance = model<IAttendance>(
+  "Attendance",
+  AttendanceSchema
+);
+
+// ------------------------------Teacher Model---------------------------
+
+const teacherAttendanceSchema = new Schema(
+  {
+    teacher: {
+      type: Types.ObjectId,
+      ref: "Teacher",
+      required: true,
+    },
+    date: {
+      type: Date,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: Object.values(AttendanceStatus),
+      required: true,
+    },
+    markedBy: {
+      type: Types.ObjectId,
+      ref: "Admin",
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
+
+// Prevent duplicate entry for same teacher/date
+teacherAttendanceSchema.index({ teacher: 1, date: 1 }, { unique: true });
+
+export const TeacherAttendance = model(
+  "TeacherAttendance",
+  teacherAttendanceSchema
+);

@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { Model, Schema } from "mongoose";
 
 export interface IAdmin extends Document {
+  adminId: string;
   fullName: string;
   phoneNumber: string;
   password: string;
@@ -11,9 +12,15 @@ export interface IAdmin extends Document {
   status: string;
   profilePicture: string;
   refreshToken: string;
+  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 const AdminSchema = new Schema<IAdmin>({
+  adminId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   fullName: {
     type: String,
     required: [true, "Username is required"],
@@ -28,7 +35,7 @@ const AdminSchema = new Schema<IAdmin>({
   },
   role: {
     type: String,
-    enum: ["admin", "student", "teacher", "other"],
+    default: "admin",
   },
   status: {
     type: String,

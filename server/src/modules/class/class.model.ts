@@ -1,7 +1,7 @@
 import { Document, model, Schema, Types } from "mongoose";
 
 export interface IClass extends Document {
-  name: string;
+  className: string;
   section: string;
   teacher: Types.ObjectId;
   subjects: Types.ObjectId[];
@@ -10,7 +10,7 @@ export interface IClass extends Document {
 
 const ClassSchema = new Schema<IClass>(
   {
-    name: {
+    className: {
       type: String,
       required: true,
     },

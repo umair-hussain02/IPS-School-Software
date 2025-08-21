@@ -5,11 +5,13 @@ export interface ISubject extends Document {
   code: string;
   classId: Types.ObjectId;
   teacherId: Types.ObjectId;
+  topicCovered: string;
+  timing: string;
   studyMaterial: Types.ObjectId[];
   announcements: Types.ObjectId[];
   assignments: Types.ObjectId[];
   quizzes: Types.ObjectId[];
-  activities: Types.ObjectId[];
+  diary: Types.ObjectId[];
   discussions: Types.ObjectId[];
 }
 
@@ -33,6 +35,12 @@ const SubjectSchema = new Schema<ISubject>(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+    topicCovered: {
+      type: String,
+    },
+    timing: {
+      type: String,
     },
     studyMaterial: [
       {
@@ -58,10 +66,10 @@ const SubjectSchema = new Schema<ISubject>(
         ref: "Quiz",
       },
     ],
-    activities: [
+    diary: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Activity",
+        ref: "Diary",
       },
     ],
     discussions: [

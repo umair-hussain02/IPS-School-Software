@@ -2,6 +2,7 @@ import { compare, hash } from "bcryptjs";
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
 
 export interface IStudent extends Document {
+  studentId: string;
   fullName: string;
   phoneNumber: string;
   password: string;
@@ -13,6 +14,7 @@ export interface IStudent extends Document {
   address: string;
   refreshToken: string;
 
+  bForm: string;
   rollNo: string;
   guardianRelation: string;
   guardianFullName: string;
@@ -26,6 +28,11 @@ export interface IStudent extends Document {
 
 const StudentSchema = new Schema<IStudent>(
   {
+    studentId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     fullName: {
       type: String,
       required: [true, "Username is required"],
@@ -37,7 +44,7 @@ const StudentSchema = new Schema<IStudent>(
     password: { type: String, required: true },
     role: {
       type: String,
-      enum: ["admin", "student", "teacher", "other"],
+      default: "student",
     },
     status: {
       type: String,
@@ -64,6 +71,11 @@ const StudentSchema = new Schema<IStudent>(
     refreshToken: {
       type: String,
       default: "",
+    },
+
+    bForm: {
+      type: String,
+      // required: true,
     },
     rollNo: {
       type: String,
