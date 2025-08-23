@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { IQuestion, Quiz } from "./quiz.model";
-import { Types } from "mongoose";
 import { QuizSubmission } from "./quizSubmission.model";
 
 // --------------------  Create Quiz   -----------------------
