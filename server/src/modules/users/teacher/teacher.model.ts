@@ -3,6 +3,7 @@ import mongoose, { Document, Model, Schema, Types } from "mongoose";
 
 export interface ITeacher extends Document {
   fullName: string;
+  teacherId: string;
   phoneNumber: string;
   password: string;
   role: string;
@@ -30,7 +31,11 @@ const TeacherSchema = new Schema<ITeacher>(
   {
     fullName: {
       type: String,
-      required: [true, "Username is required"],
+      required: [true, "Name is required"],
+    },
+    teacherId: {
+      type: String,
+      required: [true, "Teacher ID is required"],
     },
     phoneNumber: {
       type: String,

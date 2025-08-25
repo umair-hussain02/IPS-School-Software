@@ -8,19 +8,34 @@ import { errorHandler, notFoundHandler } from "./middlerwares/error.middleware";
 import healthRouter from "./modules/health/heath.route";
 import adminRouter from "./modules/users/admin/admin.route";
 import studentRouter from "./modules/users/student/student.route";
+import teacherRouter from "./modules/users/teacher/teacher.route";
+import loginRouter from "./modules/users/login.route";
 
 const app = express();
 // security Header
 app.use(helmet());
 
-app.use(cors({ origin: process.env.CORS_ORIGIN || "*" }));
+const allowedOrigins = ["http://localhost:5173", "http://127.0.0.1:5173"];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // if you’re using cookies/auth headers
+  })
+);
 
 // logging request in development mode
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
 // Limit request body size & compression
-app.use(express.json({ limit: "10kb" }));
+app.use(express.json({ limit: "50kb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
 
@@ -36,8 +51,10 @@ app.use(
 );
 
 app.use("/api/v1/health", healthRouter);
+app.use("/api/v1/login", loginRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/student", studentRouter);
+app.use("/api/v1/teacher", teacherRouter);
 
 app.use(notFoundHandler);
 

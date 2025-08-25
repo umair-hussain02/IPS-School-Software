@@ -81,6 +81,15 @@ export const registerTeacher = asyncHandler(
         ...rest
       } = req.body;
 
+      // Generate Teacher Id
+      let teacherId: string = "";
+      let exists = true;
+
+      while (exists) {
+        teacherId = generateUniqueId("teacher");
+        exists = !!(await Teacher.findOne({ teacherId }));
+      }
+
       if (!fullName || !phoneNumber || !password) {
         return res.status(400).json({
           success: false,
@@ -92,7 +101,7 @@ export const registerTeacher = asyncHandler(
       if (existingTeacher) {
         return res
           .status(400)
-          .json({ success: false, message: "User already exists" });
+          .json({ success: false, message: "Teacher already exists" });
       }
 
       let profileImagePath;
@@ -133,6 +142,7 @@ export const registerTeacher = asyncHandler(
 
       const teacher = await Teacher.create({
         fullName,
+        teacherId,
         phoneNumber,
         password,
         role,
@@ -297,63 +307,6 @@ export const createSubject = asyncHandler(
 );
 
 // Login Admin
-
-export const loginAdmin = asyncHandler(async (req: Request, res: Response) => {
-  try {
-    const { adminId, password } = req.body;
-
-    // Validate required fields
-    if (!adminId || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Please provide * all required fields",
-      });
-    }
-
-    // Check if admin exists
-    const admin = await Admin.findOne({ adminId });
-    if (!admin) {
-      return res.status(404).json({
-        success: false,
-        message: "Admin not found",
-      });
-    }
-
-    // Check password
-    const isMatch = await admin.comparePassword(password);
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Password Incorrect...!",
-      });
-    }
-
-    // Generate token
-    const { accessToken, refreshToken } =
-      await generateAccessTokenAndRefreshToken(admin);
-
-    const loggedInAdmin = await Admin.findById(admin._id).select(
-      "-password -refreshToken"
-    );
-
-    res
-      .cookie("Refresh Token", refreshToken, {
-        httpOnly: true,
-        secure: true,
-      })
-      .cookie("Access Token", accessToken, {
-        httpOnly: true,
-        secure: true,
-      })
-      .status(200)
-      .json({ success: true, data: loggedInAdmin });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: `Error when logging in admin: ${error.message}`,
-    });
-  }
-});
 
 // upload student / teacher / staff data by CSV/ excel
 
