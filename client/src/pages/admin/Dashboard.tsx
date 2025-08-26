@@ -3,9 +3,9 @@ import AdminSidebar from "@/components/admin/AdminSidebar";
 function AdminDashboard() {
   return (
  
-    <div className=" p-6 bg-gray-100">
+    <div className="w-410 p-6 bg-gray-100">
       {/* Attendance Filters */}
-      <div className="flex justify-between items-center mb-8 ">
+      <div className="flex justify-between items-center mb-5">
         <h2 className="text-xl font-bold">Attendance Filters</h2>
         <div className="flex items-center">
           <input type="date" className="border rounded p-2" />
