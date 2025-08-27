@@ -3,6 +3,7 @@ import helmet from "helmet";
 import cors from "cors";
 import morgan from "morgan";
 import compression from "compression";
+import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import { errorHandler, notFoundHandler } from "./middlerwares/error.middleware";
 import healthRouter from "./modules/health/heath.route";
@@ -10,6 +11,9 @@ import adminRouter from "./modules/users/admin/admin.route";
 import studentRouter from "./modules/users/student/student.route";
 import teacherRouter from "./modules/users/teacher/teacher.route";
 import loginRouter from "./modules/users/login.route";
+import subjectRouter from "./modules/subject/subject.route";
+import classRouter from "./modules/sClass/class.route";
+import attendanceRouter from "./modules/attendance/attendance.route";
 
 const app = express();
 // security Header
@@ -38,6 +42,7 @@ if (process.env.NODE_ENV !== "production") {
 app.use(express.json({ limit: "50kb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
+app.use(cookieParser());
 
 // Rate limiting
 app.use(
@@ -55,6 +60,9 @@ app.use("/api/v1/login", loginRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/student", studentRouter);
 app.use("/api/v1/teacher", teacherRouter);
+app.use("/api/v1/subject", subjectRouter);
+app.use("/api/v1/class", classRouter);
+app.use("/api/v1/attendance", attendanceRouter);
 
 app.use(notFoundHandler);
 

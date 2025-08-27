@@ -1,13 +1,12 @@
 import { Router } from "express";
 import {
   createAdmin,
-  createClass,
-  createSubject,
+  getAllStudents,
+  getAllTeachers,
   registerStudent,
   registerTeacher,
 } from "../admin/admin.controller";
 import upload from "../../../config/multer";
-import { authMiddleware } from "../../../middlerwares/auth.middlerware";
 
 const router = Router();
 
@@ -30,14 +29,13 @@ router.post(
   registerStudent
 );
 
-router.route("/create-subject").post(authMiddleware, createSubject);
-
-router.route("/create-class").post(authMiddleware, createClass);
-
 router.post(
   "/create-admin",
   upload.fields([{ name: "profilePicture", maxCount: 1 }]),
   createAdmin
 );
+
+router.get("/get-all-students", getAllStudents);
+router.get("/get-all-teachers", getAllTeachers);
 
 export default router;

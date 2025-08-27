@@ -5,9 +5,7 @@ import { uploadOnCloudinary } from "../../../utils/cloudinary";
 import generateUniqueId from "../../../utils/generateUniqueId";
 import { Student } from "../student/student.model";
 import { Admin } from "./admin.model";
-import { Class } from "../../class/class.model";
-import { Subject } from "../../subject/subject.model";
-import { generateAccessTokenAndRefreshToken } from "../../../utils/jwt";
+import mongoose from "mongoose";
 
 interface MulterRequest extends Request {
   files: any;
@@ -243,64 +241,82 @@ export const registerStudent = asyncHandler(
   }
 );
 
-// Create Class
-export const createClass = asyncHandler(async (req: Request, res: Response) => {
-  try {
-    const { className, section, teacher, subjects, students } = req.body;
+// Get all students
 
-    // Validate required fields
-    if (!className || !section || !teacher || !subjects || !students) {
-      return res.status(400).json({
-        success: false,
-        message: "Please provide * all required fields",
-      });
-    }
-
-    // Create Class
-    const newClass = await Class.create({
-      className,
-      section,
-      teacher,
-      subjects,
-      students,
-    });
-
-    res.status(201).json({ success: true, data: newClass });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: `Error when creating class: ${error.message}`,
-    });
-  }
-});
-
-// Create Subject
-export const createSubject = asyncHandler(
+export const getAllStudents = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const { name, code, classId, teacherId, ...rest } = req.body;
+      const { search, classId, status } = req.query;
 
-      // request Validation
-      if (!name || !code || !classId || !teacherId) {
-        return res.status(400).json({
-          success: false,
-          message: "Please provide * all required fields",
-        });
+      const filter: any = {};
+      if (classId && mongoose.Types.ObjectId.isValid(classId as string)) {
+        filter.classId = classId;
       }
-      // Create Subject
-      const newSubject = await Subject.create({
-        name,
-        code,
-        classId,
-        teacherId,
-        ...rest,
-      });
+      if (status && ["active", "inactive"].includes(status as string)) {
+        filter.status = status;
+      }
+      if (search) {
+        const regex = new RegExp(search as string, "i");
+        filter.$or = [
+          { fullName: regex },
+          { studentId: regex },
+          { rollNo: regex },
+          { phoneNumber: regex },
+        ];
+      }
 
-      res.status(201).json({ success: true, data: newSubject });
+      const students = await Student.find(filter)
+        .populate("class", "name section")
+        .select("-password -refreshToken") // never return sensitive fields
+        .lean();
+
+      res.status(200).json({
+        success: true,
+        data: students,
+      });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        message: `Error when creating subject: ${error.message}`,
+        message: `Error when fetching students: ${error.message}`,
+      });
+    }
+  }
+);
+
+// Get All Teachers
+export const getAllTeachers = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { search, teacherId, status } = req.query;
+
+      const filter: any = {};
+      if (teacherId && mongoose.Types.ObjectId.isValid(teacherId as string)) {
+        filter.teacherId = teacherId;
+      }
+      if (status && ["active", "inactive"].includes(status as string)) {
+        filter.status = status;
+      }
+      if (search) {
+        const regex = new RegExp(search as string, "i");
+        filter.$or = [
+          { fullName: regex },
+          { teacherId: regex },
+          { phoneNumber: regex },
+        ];
+      }
+
+      const teachers = await Teacher.find(filter)
+        .select("-password -refreshToken") // never return sensitive fields
+        .lean();
+
+      res.status(200).json({
+        success: true,
+        data: teachers,
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        message: `Error when fetching teachers: ${error.message}`,
       });
     }
   }

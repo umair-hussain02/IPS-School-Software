@@ -4,8 +4,7 @@ export interface IClass extends Document {
   className: string;
   section: string;
   teacher: Types.ObjectId;
-  subjects: Types.ObjectId[];
-  students: Types.ObjectId[];
+  // students: [{ type: Schema.Types.ObjectId, ref: "Student" }]
 }
 
 const ClassSchema = new Schema<IClass>(
@@ -20,23 +19,9 @@ const ClassSchema = new Schema<IClass>(
     },
     teacher: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Teacher",
       required: true,
     },
-    subjects: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Subject",
-        required: true,
-      },
-    ],
-    students: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-      },
-    ],
   },
   { timestamps: true }
 );

@@ -3,6 +3,7 @@ import { asyncHandler } from "../../../utils/asyncHandler";
 import { Student } from "./student.model";
 import { generateAccessTokenAndRefreshToken } from "../../../utils/jwt";
 
+// -----------------    Login Students  ---------------------
 export const loginStudent = asyncHandler(
   async (req: Request, res: Response) => {
     try {
@@ -61,3 +62,27 @@ export const loginStudent = asyncHandler(
     }
   }
 );
+
+// -----------------    Get Student detail by id ---------------------
+
+export const getStudentDetails = asyncHandler(
+  async (req: Request, res: Response) => {
+    const studentId = req.params.id;
+
+    // Find student by ID
+    const student = await Student.findById(studentId).select(
+      "-password -refreshToken"
+    );
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
+    res.status(200).json({ success: true, data: student });
+  }
+);
+
+// -----------------    Login Students  ---------------------

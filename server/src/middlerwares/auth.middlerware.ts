@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { TokenPayload, verifyAccessToken } from "../utils/jwt";
+import { asyncHandler } from "../utils/asyncHandler";
+import { Teacher } from "../modules/users/teacher/teacher.model";
+import { Student } from "../modules/users/student/student.model";
+import { Admin } from "../modules/users/admin/admin.model";
 
-export const authMiddleware = (roles: string[] = []) => {
+/*export const authMiddleware = (roles: string[] = []) => {
   return (
     req: Request & { user: TokenPayload },
     res: Response,
@@ -30,3 +34,37 @@ export const authMiddleware = (roles: string[] = []) => {
     }
   };
 };
+
+
+*/
+
+export const authMiddleware = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const token =
+      req.cookies?.AccessToken ||
+      req.header("Authorization")?.replace("Bearer ", "");
+
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized request" });
+    }
+    const decoded = verifyAccessToken(token);
+
+    let user;
+    if (decoded && decoded.role === "teacher") {
+      user = await Teacher.findById(decoded._id).select("-password");
+    }
+    if (decoded && decoded.role === "student") {
+      user = await Student.findById(decoded._id).select("-password");
+    }
+    if (decoded && decoded.role === "admin") {
+      user = await Admin.findById(decoded._id).select("-password");
+    }
+
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized request" });
+    }
+
+    req.user = user;
+    next();
+  }
+);

@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { Model, Schema } from "mongoose";
 
 export interface IAdmin extends Document {
+  _id: string;
   adminId: string;
   fullName: string;
   phoneNumber: string;

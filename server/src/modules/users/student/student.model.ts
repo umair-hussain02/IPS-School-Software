@@ -2,6 +2,7 @@ import { compare, hash } from "bcryptjs";
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
 
 export interface IStudent extends Document {
+  _id: string;
   studentId: string;
   fullName: string;
   phoneNumber: string;
@@ -20,8 +21,6 @@ export interface IStudent extends Document {
   guardianFullName: string;
   admissionDate: Date;
   class: Types.ObjectId;
-  subjects: Types.ObjectId[];
-  attendance: Types.ObjectId;
 
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
@@ -97,16 +96,6 @@ const StudentSchema = new Schema<IStudent>(
       type: Schema.Types.ObjectId,
       ref: "Class",
       required: true,
-    },
-    subjects: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Subject",
-      },
-    ],
-    attendance: {
-      type: Schema.Types.ObjectId,
-      ref: "Attendance",
     },
   },
   {

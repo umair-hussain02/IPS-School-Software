@@ -53,7 +53,8 @@ const AttendanceSchema = new Schema<IAttendance>(
   }
 );
 
-AttendanceSchema.index({ user: 1, date: 1 }, { unique: true });
+AttendanceSchema.index({ student: 1, class: 1, date: 1 }, { unique: true });
+
 // Prevent duplicate attendance for the same user on the same date
 
 export const StudentAttendance = model<IAttendance>(
