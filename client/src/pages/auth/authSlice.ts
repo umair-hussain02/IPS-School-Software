@@ -33,9 +33,9 @@ export const login = createAsyncThunk<
 // -------------------------    Slices    -------------------------
 
 const initialState: AuthState = {
-  user: null, //  /*JSON.parse(localStorage.getItem("User") || "null"),
+  user: JSON.parse(localStorage.getItem("User") || "null"),
   role: null,
-  refreshToken: null, // JSON.parse(localStorage.getItem("refreshToken") ||
+  refreshToken: JSON.parse(localStorage.getItem("refreshToken") || "null"),
   loading: false,
   error: null,
 };
@@ -61,10 +61,13 @@ const authSlice = createSlice({
         state.user = action.payload.data;
         state.refreshToken = action.payload.refreshToken;
         localStorage.setItem("User", JSON.stringify(action.payload.data));
+        console.log(action.payload.data);
+
         localStorage.setItem(
           "refreshToken",
           JSON.stringify(action.payload.refreshToken)
         );
+        console.log();
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;

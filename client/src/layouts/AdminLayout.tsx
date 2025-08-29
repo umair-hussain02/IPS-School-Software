@@ -19,7 +19,7 @@ function AdminLayout() {
     },
     {
       title: "Student",
-      url: "#",
+      url: "/admin/students",
       icon: Inbox,
     },
     {
@@ -58,7 +58,7 @@ function AdminLayout() {
     <>
       <SidebarProvider>
         <AppSidebar items={items} />
-        <main>
+        <main className="w-full p-4">
           <SidebarTrigger />
           <Outlet />
         </main>

@@ -16,8 +16,6 @@ type AppSidebarProps = {
 };
 
 export function AppSidebar({ items }: AppSidebarProps) {
-  console.log(items);
-
   return (
     <Sidebar>
       <SidebarContent>

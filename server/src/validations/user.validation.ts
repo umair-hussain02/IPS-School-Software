@@ -1,49 +1,38 @@
 import { z } from "zod";
 
-const baseUserSchema = {
-  fullName: z.string().min(3, "Full name must be at least 3 characters long"),
-  phoneNumber: z.string().regex(/^\+?[0-9]{10,15}$/, "Invalid phone number"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  role: z.enum(["teacher", "student", "other"]),
-  status: z.enum(["active", "inactive"]).default("active"),
-  dateOfBirth: z.string().optional(),
-  gender: z.enum(["male", "female", "other"]).optional(),
-  profilePhoto: z.string().url().optional(),
-  address: z.string().optional(),
-  refreshToken: z.string().default(""),
-};
+import { Types } from "mongoose";
 
-export const teacherSchema = z.object({
-  ...baseUserSchema,
-  resume: z.string().url().optional(),
-  otherDocuments: z.array(z.string().url()).optional(),
-  qualification: z.string(),
-  specializedSubject: z.string(),
-  experience: z.string(),
-  salary: z.number(),
-  classId: z.string(),
-  subjects: z.array(z.string()),
-  attendance: z.string().optional(),
-});
-//
 export const studentSchema = z.object({
-  ...baseUserSchema,
-  rollNo: z.string(),
-  guardianRelation: z.string(),
-  guardianFullName: z.string(),
-  admissionDate: z.string(),
-  classId: z.string(),
-  subjects: z.array(z.string()),
-  attendance: z.string().optional(),
+  _id: z.string().min(1, "_id is required"),
+  studentId: z.string().min(1, "studentId is required"),
+  fullName: z.string().min(1, "fullName is required"),
+  phoneNumber: z.string().regex(/^[0-9]{10,15}$/, "Invalid phone number"), // adjust regex to your format
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  role: z.string().min(1, "role is required"),
+  status: z.string().min(1, "status is required"),
+  dob: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "dob must be a valid date string",
+  }),
+  gender: z.enum(["male", "female", "other"]),
+  profilePicture: z.string().url("Invalid profile picture URL").optional(),
+  address: z.string().min(1, "address is required"),
+  refreshToken: z.string().optional(),
+
+  bForm: z.string().min(1, "bForm is required"),
+  rollNo: z.string().min(1, "rollNo is required"),
+  guardianRelation: z.string().min(1, "guardianRelation is required"),
+  guardianFullName: z.string().min(1, "guardianFullName is required"),
+  admissionDate: z
+    .union([z.string(), z.date()])
+    .transform((val) => (typeof val === "string" ? new Date(val) : val))
+    .refine((date) => date instanceof Date && !isNaN(date.getTime()), {
+      message: "admissionDate must be a valid date",
+    }),
+  class: z.instanceof(Types.ObjectId).or(
+    z.string().refine((val) => Types.ObjectId.isValid(val), {
+      message: "Invalid ObjectId",
+    })
+  ),
 });
 
-// Other role fields
-export const otherRoleSchema = z.object({
-  ...baseUserSchema,
-  documents: z.array(z.string().url()).optional(),
-  salary: z.number().optional(),
-});
-
-export type TeacherInputs = z.infer<typeof teacherSchema>;
-export type StudentInputs = z.infer<typeof studentSchema>;
-export type OtherRoleInputs = z.infer<typeof otherRoleSchema>;
+export type Student = z.infer<typeof studentSchema>;

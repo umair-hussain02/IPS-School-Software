@@ -9,6 +9,7 @@ export interface LoginResponse {
     fullName: string;
     role: "admin" | "teacher" | "student";
     status: string;
+    refreshToken: string;
   };
   role: "admin" | "teacher" | "student" | null;
   refreshToken: string;

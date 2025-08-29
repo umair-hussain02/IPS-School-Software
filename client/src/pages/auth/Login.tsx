@@ -24,8 +24,6 @@ function Login() {
       const resultAction = await dispatch(login(data));
       if (login.fulfilled.match(resultAction)) {
         const user = resultAction.payload?.data;
-        console.log("Login successful:", resultAction.payload);
-        console.log("User role:", user);
 
         if (user.role === "admin") {
           navigate("/admin");

@@ -8,6 +8,8 @@ import NotFound from "@/pages/NotFound";
 import AdminLayout from "@/layouts/AdminLayout";
 import TeacherLayout from "@/layouts/teacherLayout";
 import StudentLayout from "@/layouts/studentLayout";
+import Student from "@/pages/admin/Student";
+import AddStudentForm from "@/components/admin/AddStudentForm";
 
 const routes = createBrowserRouter([
   {
@@ -28,11 +30,16 @@ const routes = createBrowserRouter([
         element: <AdminDashboard />,
       },
       {
-        path: "dashboard",
-        element: <h2>Admin Dashboard</h2>,
+        path: "students",
+        element: <Student />,
+      },
+      {
+        path: "students/add",
+        element: <AddStudentForm />,
       },
     ],
   },
+
   {
     path: "/teacher",
     element: (
