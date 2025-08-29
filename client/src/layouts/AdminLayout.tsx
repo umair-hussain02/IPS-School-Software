@@ -14,7 +14,7 @@ function AdminLayout() {
   const items: NavItem[] = [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/admin",
       icon: LayoutDashboard,
     },
     {
@@ -24,12 +24,12 @@ function AdminLayout() {
     },
     {
       title: "Teacher",
-      url: "#",
+      url: "/admin/teacher",
       icon: Calendar,
     },
     {
       title: "Classes",
-      url: "#",
+      url: "/admin/classes",
       icon: Search,
     },
     {
