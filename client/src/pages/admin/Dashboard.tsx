@@ -1,7 +1,7 @@
 function AdminDashboard() {
   return (
  
-    <div className="w-410 p-6 bg-gray-100">
+    <div className="p-4">
       {/* Attendance Filters */}
       <div className="flex justify-between items-center mb-5">
         <h2 className="text-xl font-bold">Attendance Filters</h2>
